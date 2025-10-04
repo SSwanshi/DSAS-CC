@@ -1,0 +1,142 @@
+.navbar { 
+  background: #fff; 
+  height: 80px; 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  font-size: 1.2rem; 
+  position: sticky; 
+  top: 0; 
+  z-index: 999; 
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+}
+
+.navbar-container { 
+  display: flex; 
+  justify-content: space-between; 
+  height: 80px; 
+  width: 100%; 
+  max-width: 1200px; 
+  margin: 0 auto; 
+  padding: 0 2rem; 
+}
+
+.navbar-logo { 
+  color: #2c3e50; 
+  justify-self: start; 
+  cursor: pointer; 
+  text-decoration: none; 
+  font-size: 2rem; 
+  display: flex; 
+  align-items: center; 
+  font-weight: bold; 
+  transition: color 0.3s ease;
+}
+
+.navbar-logo:hover {
+  color: #3498db;
+}
+
+.nav-menu { 
+  display: flex; 
+  align-items: center; 
+  list-style: none; 
+  text-align: center; 
+  gap: 1rem;
+}
+
+.nav-item { 
+  height: 80px; 
+  display: flex;
+  align-items: center;
+}
+
+.nav-links { 
+  color: #333; 
+  display: flex; 
+  align-items: center; 
+  text-decoration: none; 
+  padding: 0 1rem; 
+  height: 100%; 
+  transition: color 0.3s ease;
+}
+
+.nav-links:hover {
+  color: #3498db;
+}
+
+.nav-links.active { 
+  border-bottom: 4px solid #3498db; 
+  color: #3498db;
+}
+
+.nav-button { 
+  padding: 8px 20px !important; 
+  border-radius: 5px; 
+  background-color: #3498db; 
+  color: #fff !important; 
+  border: none; 
+  margin-left: 0.5rem; 
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.nav-button:hover { 
+  background-color: #2980b9; 
+  border-bottom: none; 
+}
+
+.admin-button {
+  background-color: #e74c3c !important;
+}
+
+.admin-button:hover {
+  background-color: #c0392b !important;
+}
+
+.logout-button {
+  background-color: #e74c3c !important;
+}
+
+.logout-button:hover {
+  background-color: #c0392b !important;
+}
+
+.nav-user {
+  color: #2c3e50;
+  font-weight: 500;
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.approval-status {
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-top: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+.approval-status.pending {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeaa7;
+}
+
+@media screen and (max-width: 768px) {
+  .nav-menu {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .nav-item {
+    height: auto;
+  }
+  
+  .nav-button {
+    margin-left: 0;
+    margin-top: 0.5rem;
+  }
+}
