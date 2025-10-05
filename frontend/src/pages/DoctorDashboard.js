@@ -1,11 +1,13 @@
 // src/pages/DoctorDashboard.js
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { apiService } from '../services/apiService';
 import ApprovalMessage from '../components/common/ApprovalMessage';
 
 const DoctorDashboard = () => {
   const { user, logout } = useAuth();
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState('home');
   const [assignedPatients, setAssignedPatients] = useState([]);
   const [allPatients, setAllPatients] = useState([]);
@@ -22,6 +24,19 @@ const DoctorDashboard = () => {
       fetchAllPatients();
     }
   }, [activeTab]);
+
+  // Handle navigation state from home page
+  useEffect(() => {
+    if (location.state) {
+      if (location.state.activeTab) {
+        setActiveTab(location.state.activeTab);
+      }
+      if (location.state.selectedPatientId) {
+        // Automatically fetch records for the selected patient
+        fetchPatientRecords(location.state.selectedPatientId);
+      }
+    }
+  }, [location.state]);
 
   const fetchAssignedPatients = async () => {
     try {

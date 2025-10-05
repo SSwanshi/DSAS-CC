@@ -10,7 +10,6 @@ const DoctorHomePage = () => {
   const navigate = useNavigate();
   const [assignedPatients, setAssignedPatients] = useState([]);
   const [totalPatients, setTotalPatients] = useState(0);
-  const [recentRecords, setRecentRecords] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -26,20 +25,21 @@ const DoctorHomePage = () => {
       setAssignedPatients(patientsResponse.data.patients);
       setTotalPatients(patientsResponse.data.patients.length);
 
-      // Fetch recent records (from assigned patients)
-      if (patientsResponse.data.patients.length > 0) {
-        try {
-          const recordsResponse = await apiService.getPatientRecordsForDoctor(patientsResponse.data.patients[0].id);
-          setRecentRecords(recordsResponse.data.records.slice(0, 3)); // Get latest 3 records
-        } catch (error) {
-          setRecentRecords([]);
-        }
-      }
     } catch (error) {
       console.error('Error fetching doctor data:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleViewRecords = (patientId) => {
+    // Navigate to doctor dashboard with patient selected
+    navigate('/doctor-dashboard', { 
+      state: { 
+        selectedPatientId: patientId,
+        activeTab: 'assigned-patients'
+      } 
+    });
   };
 
   if (loading) {
@@ -70,20 +70,20 @@ const DoctorHomePage = () => {
           </div>
 
           <div className="stat-card">
-            <div className="stat-icon">📊</div>
-            <div className="stat-content">
-              <h3>Recent Activity</h3>
-              <p className="activity-count">{recentRecords.length}</p>
-              <p className="activity-label">Recent health records</p>
-            </div>
-          </div>
-
-          <div className="stat-card">
             <div className="stat-icon">🔍</div>
             <div className="stat-content">
               <h3>Search Access</h3>
               <p className="search-status">All patients</p>
               <p className="search-label">Full database access</p>
+            </div>
+          </div>
+
+          <div className="stat-card">
+            <div className="stat-icon">📋</div>
+            <div className="stat-content">
+              <h3>Quick Access</h3>
+              <p className="access-status">Dashboard</p>
+              <p className="access-label">Manage all patients</p>
             </div>
           </div>
         </div>
@@ -124,7 +124,12 @@ const DoctorHomePage = () => {
                     <p className="patient-phone">{patient.phone || 'No phone provided'}</p>
                   </div>
                   <div className="patient-actions">
-                    <button className="view-records-btn">View Records</button>
+                    <button 
+                      className="view-records-btn"
+                      onClick={() => handleViewRecords(patient.id)}
+                    >
+                      View Records
+                    </button>
                   </div>
                 </div>
               ))}
@@ -143,31 +148,6 @@ const DoctorHomePage = () => {
           )}
         </div>
 
-        <div className="recent-activity">
-          <h2>Recent Health Records</h2>
-          {recentRecords.length > 0 ? (
-            <div className="records-list">
-              {recentRecords.map(record => (
-                <div key={record.id} className="record-item">
-                  <div className="record-icon">📄</div>
-                  <div className="record-content">
-                    <p className="record-type">{(record.data_type || 'Unknown').replace('_', ' ').toUpperCase()}</p>
-                    <p className="record-patient">Patient: {record.first_name} {record.last_name}</p>
-                    <span className="record-time">
-                      {new Date(record.created_at).toLocaleDateString()}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="no-records">
-              <div className="no-records-icon">📋</div>
-              <h3>No recent records</h3>
-              <p>Health records from your patients will appear here.</p>
-            </div>
-          )}
-        </div>
 
         <style jsx>{`
         .doctor-home {
@@ -252,22 +232,22 @@ const DoctorHomePage = () => {
   color: #2d3436;
 }
 
-.patient-count, .activity-count {
+.patient-count {
   font-size: 2rem;
   font-weight: 700;
   color: #00b894;
 }
 
-.patient-label, .activity-label {
+.patient-label {
   color: #636e72;
 }
 
-.search-status {
+.search-status, .access-status {
   color: #0984e3;
   font-weight: 600;
 }
 
-.search-label {
+.search-label, .access-label {
   color: #636e72;
 }
 
@@ -320,22 +300,22 @@ const DoctorHomePage = () => {
   transform: translateY(-2px);
 }
 
-.recent-patients, .recent-activity {
+.recent-patients {
   margin-bottom: 3rem;
 }
 
-.recent-patients h2, .recent-activity h2 {
+.recent-patients h2 {
   color: #2d3436;
   margin-bottom: 1.5rem;
   text-align: center;
 }
 
-.patients-list, .records-list {
+.patients-list {
   display: grid;
   gap: 1rem;
 }
 
-.patient-card, .record-item {
+.patient-card {
   background: white;
   border-radius: 12px;
   padding: 1.5rem;
@@ -346,7 +326,7 @@ const DoctorHomePage = () => {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.patient-card:hover, .record-item:hover {
+.patient-card:hover {
   transform: translateY(-3px);
   box-shadow: 0 10px 20px rgba(0,0,0,0.12);
 }
@@ -356,7 +336,7 @@ const DoctorHomePage = () => {
   color: #2d3436;
 }
 
-.patient-email, .patient-phone, .record-patient, .record-time {
+.patient-email, .patient-phone {
   margin: 0.25rem 0;
   color: #636e72;
   font-size: 0.9rem;
@@ -377,7 +357,7 @@ const DoctorHomePage = () => {
   transform: translateY(-2px);
 }
 
-.no-patients, .no-records {
+.no-patients {
   text-align: center;
   padding: 3rem;
   background: white;
@@ -385,17 +365,17 @@ const DoctorHomePage = () => {
   box-shadow: 0 8px 25px rgba(0,0,0,0.1);
 }
 
-.no-patients-icon, .no-records-icon {
+.no-patients-icon {
   font-size: 3rem;
   margin-bottom: 1rem;
 }
 
-.no-patients h3, .no-records h3 {
+.no-patients h3 {
   color: #2d3436;
   margin-bottom: 0.5rem;
 }
 
-.no-patients p, .no-records p {
+.no-patients p {
   color: #636e72;
 }
 

@@ -154,7 +154,6 @@ const AdminDashboard = () => {
   const renderHome = () => (
     <div className="dashboard-content">
       <h2>Welcome, {user?.firstName} {user?.lastName}</h2>
-      <p>Cloud Server Administration Panel</p>
       
       {loading ? (
         <div className="loading">Loading dashboard statistics...</div>

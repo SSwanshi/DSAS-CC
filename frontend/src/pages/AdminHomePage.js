@@ -184,44 +184,7 @@ const AdminHomePage = () => {
         </div>
       </div>
 
-      <div className="recent-activity">
-        <h2>System Status</h2>
-        <div className="status-list">
-          <div className="status-item success">
-            <div className="status-icon">✅</div>
-            <div className="status-content">
-              <p>Database Connection</p>
-              <span className="status-detail">SQLite database operational</span>
-            </div>
-          </div>
-
-          <div className="status-item success">
-            <div className="status-icon">🔒</div>
-            <div className="status-content">
-              <p>Data Encryption</p>
-              <span className="status-detail">All patient data encrypted</span>
-            </div>
-          </div>
-
-          <div className="status-item success">
-            <div className="status-icon">🌐</div>
-            <div className="status-content">
-              <p>API Services</p>
-              <span className="status-detail">All endpoints operational</span>
-            </div>
-          </div>
-
-          <div className="status-item warning">
-            <div className="status-icon">⚠️</div>
-            <div className="status-content">
-              <p>Pending Approvals</p>
-              <span className="status-detail">
-                {pendingUsers.patients + pendingUsers.doctors} users awaiting approval
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
+      
 
       <style jsx>{`
         .admin-home {
