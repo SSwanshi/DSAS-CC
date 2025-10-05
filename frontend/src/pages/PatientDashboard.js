@@ -55,7 +55,7 @@ const PatientDashboard = () => {
         fileName: `health_record_${Date.now()}`,
         fileSize: JSON.stringify(formData).length
       });
-      
+
       setFormData({
         dataType: '',
         patientName: '',
@@ -66,7 +66,7 @@ const PatientDashboard = () => {
         medications: '',
         notes: ''
       });
-      
+
       alert('Record uploaded successfully!');
     } catch (error) {
       setError('Failed to upload record');
@@ -101,9 +101,9 @@ const PatientDashboard = () => {
     <div className="dashboard-content">
       <h2>Upload Health Data</h2>
       <p>Fill out the form below to securely upload your health information. All data will be encrypted before storage.</p>
-      
+
       {error && <div className="error-message">{error}</div>}
-      
+
       <form onSubmit={handleUpload} className="upload-form">
         <div className="form-row">
           <div className="form-group">
@@ -121,22 +121,22 @@ const PatientDashboard = () => {
         <div className="form-row">
           <div className="form-group">
             <label>Patient Name</label>
-            <input 
-              type="text" 
-              name="patientName" 
-              value={formData.patientName} 
-              onChange={handleFormChange} 
-              required 
+            <input
+              type="text"
+              name="patientName"
+              value={formData.patientName}
+              onChange={handleFormChange}
+              required
             />
           </div>
           <div className="form-group">
             <label>Age</label>
-            <input 
-              type="number" 
-              name="age" 
-              value={formData.age} 
-              onChange={handleFormChange} 
-              required 
+            <input
+              type="number"
+              name="age"
+              value={formData.age}
+              onChange={handleFormChange}
+              required
             />
           </div>
           <div className="form-group">
@@ -152,10 +152,10 @@ const PatientDashboard = () => {
 
         <div className="form-group">
           <label>Symptoms</label>
-          <textarea 
-            name="symptoms" 
-            value={formData.symptoms} 
-            onChange={handleFormChange} 
+          <textarea
+            name="symptoms"
+            value={formData.symptoms}
+            onChange={handleFormChange}
             rows="3"
             placeholder="Describe your symptoms..."
           />
@@ -163,10 +163,10 @@ const PatientDashboard = () => {
 
         <div className="form-group">
           <label>Diagnosis</label>
-          <textarea 
-            name="diagnosis" 
-            value={formData.diagnosis} 
-            onChange={handleFormChange} 
+          <textarea
+            name="diagnosis"
+            value={formData.diagnosis}
+            onChange={handleFormChange}
             rows="3"
             placeholder="Medical diagnosis or findings..."
           />
@@ -174,10 +174,10 @@ const PatientDashboard = () => {
 
         <div className="form-group">
           <label>Medications</label>
-          <textarea 
-            name="medications" 
-            value={formData.medications} 
-            onChange={handleFormChange} 
+          <textarea
+            name="medications"
+            value={formData.medications}
+            onChange={handleFormChange}
             rows="2"
             placeholder="List current medications..."
           />
@@ -185,10 +185,10 @@ const PatientDashboard = () => {
 
         <div className="form-group">
           <label>Additional Notes</label>
-          <textarea 
-            name="notes" 
-            value={formData.notes} 
-            onChange={handleFormChange} 
+          <textarea
+            name="notes"
+            value={formData.notes}
+            onChange={handleFormChange}
             rows="3"
             placeholder="Any additional information..."
           />
@@ -205,7 +205,7 @@ const PatientDashboard = () => {
     <div className="dashboard-content">
       <h2>Your Uploaded Records</h2>
       <p>All your health data is stored in encrypted format for maximum security.</p>
-      
+
       {loading ? (
         <div className="loading">Loading records...</div>
       ) : records.length === 0 ? (
@@ -235,266 +235,475 @@ const PatientDashboard = () => {
   return (
     <ApprovalMessage user={user}>
       <div className="patient-dashboard">
-      <div className="dashboard-sidebar">
-        <div className="logo">
-          <h2>DSAS</h2>
+        <div className="dashboard-sidebar">
+          <div className="logo">
+            <h2>DSAS</h2>
+          </div>
+          <nav className="dashboard-nav">
+            <button
+              className={activeTab === 'home' ? 'nav-item active' : 'nav-item'}
+              onClick={() => setActiveTab('home')}
+            >
+              🏠 Home
+            </button>
+            <button
+              className={activeTab === 'upload' ? 'nav-item active' : 'nav-item'}
+              onClick={() => setActiveTab('upload')}
+            >
+              📤 Upload Data
+            </button>
+            <button
+              className={activeTab === 'records' ? 'nav-item active' : 'nav-item'}
+              onClick={() => setActiveTab('records')}
+            >
+              📋 See Uploaded Files
+            </button>
+          </nav>
+          <div className="user-info">
+            <p>Welcome, {user?.firstName}</p>
+            <button onClick={logout} className="logout-button">
+              Logout
+            </button>
+          </div>
         </div>
-        <nav className="dashboard-nav">
-          <button 
-            className={activeTab === 'home' ? 'nav-item active' : 'nav-item'}
-            onClick={() => setActiveTab('home')}
-          >
-            🏠 Home
-          </button>
-          <button 
-            className={activeTab === 'upload' ? 'nav-item active' : 'nav-item'}
-            onClick={() => setActiveTab('upload')}
-          >
-            📤 Upload Data
-          </button>
-          <button 
-            className={activeTab === 'records' ? 'nav-item active' : 'nav-item'}
-            onClick={() => setActiveTab('records')}
-          >
-            📋 See Uploaded Files
-          </button>
-        </nav>
-        <div className="user-info">
-          <p>Welcome, {user?.firstName}</p>
-          <button onClick={logout} className="logout-button">
-            Logout
-          </button>
+
+        <div className="dashboard-main">
+          {activeTab === 'home' && renderHome()}
+          {activeTab === 'upload' && renderUpload()}
+          {activeTab === 'records' && renderRecords()}
         </div>
-      </div>
 
-      <div className="dashboard-main">
-        {activeTab === 'home' && renderHome()}
-        {activeTab === 'upload' && renderUpload()}
-        {activeTab === 'records' && renderRecords()}
-      </div>
+        <style jsx>{`
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
-      <style jsx>{`
-        .patient-dashboard {
-          display: flex;
-          min-height: 100vh;
-          background: #f8f9fa;
-        }
+  .patient-dashboard {
+    display: flex;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+  }
 
-        .dashboard-sidebar {
-          width: 250px;
-          background: #2c3e50;
-          color: white;
-          padding: 2rem 1rem;
-          display: flex;
-          flex-direction: column;
-        }
+  .dashboard-sidebar {
+    width: 280px;
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+    color: white;
+    padding: 2rem 0;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+  }
 
-        .logo h2 {
-          margin: 0 0 2rem 0;
-          text-align: center;
-          color: #3498db;
-        }
+  .logo {
+    padding: 0 1.5rem 2rem;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 2rem;
+  }
 
-        .dashboard-nav {
-          flex: 1;
-        }
+  .logo h2 {
+    margin: 0;
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 800;
+    letter-spacing: 2px;
+  }
 
-        .nav-item {
-          width: 100%;
-          background: none;
-          border: none;
-          color: white;
-          padding: 1rem;
-          text-align: left;
-          cursor: pointer;
-          border-radius: 5px;
-          margin-bottom: 0.5rem;
-          transition: background 0.3s ease;
-        }
+  .dashboard-nav {
+    flex: 1;
+    padding: 0 1rem;
+    overflow-y: auto;
+  }
 
-        .nav-item:hover {
-          background: #34495e;
-        }
+  .nav-item {
+    width: 100%;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    padding: 1rem 1.25rem;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 12px;
+    margin-bottom: 0.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
 
-        .nav-item.active {
-          background: #3498db;
-        }
+  .nav-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    transform: translateX(5px);
+  }
 
-        .user-info {
-          border-top: 1px solid #34495e;
-          padding-top: 1rem;
-        }
+  .nav-item.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  }
 
-        .logout-button {
-          background: #e74c3c;
-          color: white;
-          border: none;
-          padding: 0.5rem 1rem;
-          border-radius: 5px;
-          cursor: pointer;
-          width: 100%;
-        }
+  .user-info {
+    padding: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
 
-        .dashboard-main {
-          flex: 1;
-          padding: 2rem;
-        }
+  .user-info p {
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
 
-        .dashboard-content h2 {
-          color: #2c3e50;
-          margin-bottom: 1rem;
-        }
+  .logout-button {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    border: none;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+  }
 
-        .welcome-cards {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 2rem;
-          margin-top: 2rem;
-        }
+  .logout-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.5);
+  }
 
-        .welcome-card {
-          background: white;
-          padding: 2rem;
-          border-radius: 10px;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-          text-align: center;
-        }
+  .dashboard-main {
+    flex: 1;
+    padding: 2.5rem;
+    overflow-y: auto;
+    animation: fadeIn 0.5s ease-out;
+  }
 
-        .welcome-card h3 {
-          color: #2c3e50;
-          margin-bottom: 1rem;
-        }
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 
-        .action-button {
-          background: #3498db;
-          color: white;
-          border: none;
-          padding: 0.75rem 1.5rem;
-          border-radius: 5px;
-          cursor: pointer;
-          margin-top: 1rem;
-        }
+  .dashboard-content h2 {
+    color: #1e293b;
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    animation: slideDown 0.5s ease-out;
+  }
 
-        .upload-form {
-          background: white;
-          padding: 2rem;
-          border-radius: 10px;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-          max-width: 800px;
-        }
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 
-        .form-row {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-          gap: 1rem;
-          margin-bottom: 1rem;
-        }
+  .dashboard-content > p {
+    color: #64748b;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+  }
 
-        .form-group {
-          margin-bottom: 1rem;
-        }
+  .welcome-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+  }
 
-        .form-group label {
-          display: block;
-          margin-bottom: 0.5rem;
-          color: #2c3e50;
-          font-weight: bold;
-        }
+  .welcome-card {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    animation: fadeInUp 0.5s ease-out;
+    animation-fill-mode: both;
+  }
 
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-          width: 100%;
-          padding: 0.75rem;
-          border: 2px solid #ecf0f1;
-          border-radius: 5px;
-          font-size: 1rem;
-        }
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-          outline: none;
-          border-color: #3498db;
-        }
+  .welcome-card:nth-child(1) { animation-delay: 0.1s; }
+  .welcome-card:nth-child(2) { animation-delay: 0.2s; }
 
-        .submit-button {
-          background: #27ae60;
-          color: white;
-          border: none;
-          padding: 1rem 2rem;
-          border-radius: 5px;
-          font-size: 1rem;
-          cursor: pointer;
-        }
+  .welcome-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.15);
+  }
 
-        .submit-button:disabled {
-          background: #bdc3c7;
-          cursor: not-allowed;
-        }
+  .welcome-card h3 {
+    color: #1e293b;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
 
-        .error-message {
-          background: #e74c3c;
-          color: white;
-          padding: 1rem;
-          border-radius: 5px;
-          margin-bottom: 1rem;
-        }
+  .welcome-card p {
+    color: #64748b;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
 
-        .loading {
-          text-align: center;
-          padding: 2rem;
-          color: #7f8c8d;
-        }
+  .action-button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 0.9rem 2rem;
+    border-radius: 12px;
+    cursor: pointer;
+    margin-top: 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  }
 
-        .no-records {
-          text-align: center;
-          padding: 2rem;
-          color: #7f8c8d;
-          background: white;
-          border-radius: 10px;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
+  .action-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+  }
 
-        .records-list {
-          display: grid;
-          gap: 1rem;
-        }
+  .upload-form {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    max-width: 900px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
 
-        .record-card {
-          background: white;
-          padding: 1.5rem;
-          border-radius: 10px;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
+  .form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
 
-        .record-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 1rem;
-        }
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
 
-        .record-header h4 {
-          margin: 0;
-          color: #2c3e50;
-        }
+  .form-group label {
+    display: block;
+    margin-bottom: 0.75rem;
+    color: #1e293b;
+    font-weight: 600;
+    font-size: 1rem;
+  }
 
-        .record-date {
-          color: #7f8c8d;
-          font-size: 0.9rem;
-        }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    color: #1e293b;
+    background: #f8fafc;
+    transition: all 0.3s ease;
+    font-family: inherit;
+  }
 
-        .record-details p {
-          margin: 0.5rem 0;
-          color: #34495e;
-        }
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+  }
 
-        .encrypted-status {
-          color: #27ae60;
-          font-weight: bold;
-        }
-      `}</style>
+  .form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  .submit-button {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    padding: 1.1rem 2.5rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+  }
+
+  .submit-button:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
+  }
+
+  .submit-button:disabled {
+    background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  .error-message {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    padding: 1.25rem 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    font-weight: 500;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+    animation: slideDown 0.3s ease-out;
+  }
+
+  .loading {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    color: #64748b;
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+
+  .no-records {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    color: #64748b;
+    font-size: 1rem;
+  }
+
+  .records-list {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .record-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  .record-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+  }
+
+  .record-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e8ecf1;
+  }
+
+  .record-header h4 {
+    margin: 0;
+    color: #1e293b;
+    font-size: 1.3rem;
+    font-weight: 600;
+  }
+
+  .record-date {
+    color: #64748b;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  .record-details p {
+    margin: 0.75rem 0;
+    color: #475569;
+    font-size: 0.95rem;
+    padding: 0.75rem;
+    background: #f8fafc;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+  }
+
+  .record-details p:hover {
+    background: #e8ecf1;
+    transform: translateX(5px);
+  }
+
+  .record-details strong {
+    color: #1e293b;
+    font-weight: 600;
+  }
+
+  .encrypted-status {
+    color: #10b981;
+    font-weight: 600;
+  }
+
+  @media (max-width: 768px) {
+    .patient-dashboard {
+      flex-direction: column;
+    }
+
+    .dashboard-sidebar {
+      width: 100%;
+      height: auto;
+      position: relative;
+    }
+
+    .dashboard-main {
+      padding: 1.5rem;
+    }
+
+    .welcome-cards {
+      grid-template-columns: 1fr;
+    }
+
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+
+    .upload-form {
+      padding: 1.5rem;
+    }
+  }
+`}</style>
       </div>
     </ApprovalMessage>
   );

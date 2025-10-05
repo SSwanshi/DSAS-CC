@@ -133,7 +133,7 @@ const AdminDashboard = () => {
   const renderApproveUsers = (role) => (
     <div className="dashboard-content">
       <h2>Approve {role.charAt(0).toUpperCase() + role.slice(1)}s</h2>
-      
+
       {loading ? (
         <div className="loading">Loading pending users...</div>
       ) : pendingUsers.length === 0 ? (
@@ -151,13 +151,13 @@ const AdminDashboard = () => {
                 <p>Registered: {new Date(user.created_at).toLocaleDateString()}</p>
               </div>
               <div className="user-actions">
-                <button 
+                <button
                   onClick={() => handleApproveUser(user.id, true)}
                   className="approve-button"
                 >
                   Approve
                 </button>
-                <button 
+                <button
                   onClick={() => handleApproveUser(user.id, false)}
                   className="reject-button"
                 >
@@ -174,13 +174,13 @@ const AdminDashboard = () => {
   const renderAssignDoctor = () => (
     <div className="dashboard-content">
       <h2>Assign Doctor to Patient</h2>
-      
+
       <form onSubmit={handleAssignDoctor} className="assignment-form">
         <div className="form-group">
           <label>Select Patient</label>
-          <select 
-            value={assignmentData.patientId} 
-            onChange={(e) => setAssignmentData({...assignmentData, patientId: e.target.value})}
+          <select
+            value={assignmentData.patientId}
+            onChange={(e) => setAssignmentData({ ...assignmentData, patientId: e.target.value })}
             required
           >
             <option value="">Choose a patient</option>
@@ -194,9 +194,9 @@ const AdminDashboard = () => {
 
         <div className="form-group">
           <label>Select Doctor</label>
-          <select 
-            value={assignmentData.doctorId} 
-            onChange={(e) => setAssignmentData({...assignmentData, doctorId: e.target.value})}
+          <select
+            value={assignmentData.doctorId}
+            onChange={(e) => setAssignmentData({ ...assignmentData, doctorId: e.target.value })}
             required
           >
             <option value="">Choose a doctor</option>
@@ -233,7 +233,7 @@ const AdminDashboard = () => {
     <div className="dashboard-content">
       <h2>All Uploaded Data (Encrypted)</h2>
       <p>All patient data is stored in encrypted format for security.</p>
-      
+
       {loading ? (
         <div className="loading">Loading records...</div>
       ) : allRecords.length === 0 ? (
@@ -273,31 +273,31 @@ const AdminDashboard = () => {
           <h2>DSAS</h2>
         </div>
         <nav className="dashboard-nav">
-          <button 
+          <button
             className={activeTab === 'home' ? 'nav-item active' : 'nav-item'}
             onClick={() => setActiveTab('home')}
           >
             🏠 Home
           </button>
-          <button 
+          <button
             className={activeTab === 'approve-patients' ? 'nav-item active' : 'nav-item'}
             onClick={() => setActiveTab('approve-patients')}
           >
             👥 Approve Patient
           </button>
-          <button 
+          <button
             className={activeTab === 'approve-doctors' ? 'nav-item active' : 'nav-item'}
             onClick={() => setActiveTab('approve-doctors')}
           >
             👨‍⚕️ Approve Doctors
           </button>
-          <button 
+          <button
             className={activeTab === 'assign-doctor' ? 'nav-item active' : 'nav-item'}
             onClick={() => setActiveTab('assign-doctor')}
           >
             🔗 Assign Doctor
           </button>
-          <button 
+          <button
             className={activeTab === 'view-data' ? 'nav-item active' : 'nav-item'}
             onClick={() => setActiveTab('view-data')}
           >
@@ -322,294 +322,540 @@ const AdminDashboard = () => {
       </div>
 
       <style jsx>{`
-        .admin-dashboard {
-          display: flex;
-          min-height: 100vh;
-          background: #f8f9fa;
-        }
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
-        .dashboard-sidebar {
-          width: 250px;
-          background: #2c3e50;
-          color: white;
-          padding: 2rem 1rem;
-          display: flex;
-          flex-direction: column;
-        }
+  .admin-dashboard {
+    display: flex;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+  }
 
-        .logo h2 {
-          margin: 0 0 2rem 0;
-          text-align: center;
-          color: #3498db;
-        }
+  .dashboard-sidebar {
+    width: 280px;
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+    color: white;
+    padding: 2rem 0;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+  }
 
-        .dashboard-nav {
-          flex: 1;
-        }
+  .logo {
+    padding: 0 1.5rem 2rem;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 2rem;
+  }
 
-        .nav-item {
-          width: 100%;
-          background: none;
-          border: none;
-          color: white;
-          padding: 1rem;
-          text-align: left;
-          cursor: pointer;
-          border-radius: 5px;
-          margin-bottom: 0.5rem;
-          transition: background 0.3s ease;
-        }
+  .logo h2 {
+    margin: 0;
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 800;
+    letter-spacing: 2px;
+  }
 
-        .nav-item:hover {
-          background: #34495e;
-        }
+  .dashboard-nav {
+    flex: 1;
+    padding: 0 1rem;
+    overflow-y: auto;
+  }
 
-        .nav-item.active {
-          background: #3498db;
-        }
+  .nav-item {
+    width: 100%;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    padding: 1rem 1.25rem;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 12px;
+    margin-bottom: 0.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
 
-        .user-info {
-          border-top: 1px solid #34495e;
-          padding-top: 1rem;
-        }
+  .nav-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    transform: translateX(5px);
+  }
 
-        .logout-button {
-          background: #e74c3c;
-          color: white;
-          border: none;
-          padding: 0.5rem 1rem;
-          border-radius: 5px;
-          cursor: pointer;
-          width: 100%;
-        }
+  .nav-item.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  }
 
-        .dashboard-main {
-          flex: 1;
-          padding: 2rem;
-        }
+  .user-info {
+    padding: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
 
-        .dashboard-content h2 {
-          color: #2c3e50;
-          margin-bottom: 1rem;
-        }
+  .user-info p {
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
 
-        .welcome-cards {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-          gap: 2rem;
-          margin-top: 2rem;
-        }
+  .logout-button {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    border: none;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+  }
 
-        .welcome-card {
-          background: white;
-          padding: 2rem;
-          border-radius: 10px;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-          text-align: center;
-        }
+  .logout-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.5);
+  }
 
-        .welcome-card h3 {
-          color: #2c3e50;
-          margin-bottom: 1rem;
-        }
+  .dashboard-main {
+    flex: 1;
+    padding: 2.5rem;
+    overflow-y: auto;
+  }
 
-        .action-button {
-          background: #3498db;
-          color: white;
-          border: none;
-          padding: 0.75rem 1.5rem;
-          border-radius: 5px;
-          cursor: pointer;
-          margin-top: 1rem;
-        }
+  .dashboard-content h2 {
+    color: #1e293b;
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
 
-        .loading {
-          text-align: center;
-          padding: 2rem;
-          color: #7f8c8d;
-        }
+  .dashboard-content > p {
+    color: #64748b;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+  }
 
-        .no-users, .no-records {
-          text-align: center;
-          padding: 2rem;
-          color: #7f8c8d;
-          background: white;
-          border-radius: 10px;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
+  .welcome-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+  }
 
-        .users-list, .records-list {
-          display: grid;
-          gap: 1rem;
-        }
+  .welcome-card {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
 
-        .user-card, .record-card {
-          background: white;
-          padding: 1.5rem;
-          border-radius: 10px;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
+  .welcome-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.15);
+  }
 
-        .user-card {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
+  .welcome-card h3 {
+    color: #1e293b;
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+    font-weight: 600;
+  }
 
-        .user-info h4 {
-          margin: 0 0 0.5rem 0;
-          color: #2c3e50;
-        }
+  .welcome-card p {
+    color: #64748b;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
 
-        .user-info p {
-          margin: 0.25rem 0;
-          color: #7f8c8d;
-        }
+  .action-button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 0.9rem 2rem;
+    border-radius: 12px;
+    cursor: pointer;
+    margin-top: 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  }
 
-        .user-actions {
-          display: flex;
-          gap: 1rem;
-        }
+  .action-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+  }
 
-        .approve-button {
-          background: #27ae60;
-          color: white;
-          border: none;
-          padding: 0.5rem 1rem;
-          border-radius: 5px;
-          cursor: pointer;
-        }
+  .loading {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    color: #64748b;
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
 
-        .reject-button {
-          background: #e74c3c;
-          color: white;
-          border: none;
-          padding: 0.5rem 1rem;
-          border-radius: 5px;
-          cursor: pointer;
-        }
+  .no-users, .no-records {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    color: #64748b;
+  }
 
-        .assignment-form {
-          background: white;
-          padding: 2rem;
-          border-radius: 10px;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-          margin-bottom: 2rem;
-        }
+  .users-list, .records-list {
+    display: grid;
+    gap: 1.5rem;
+  }
 
-        .form-group {
-          margin-bottom: 1rem;
-        }
+  .user-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
 
-        .form-group label {
-          display: block;
-          margin-bottom: 0.5rem;
-          color: #2c3e50;
-          font-weight: bold;
-        }
+  .user-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+  }
 
-        .form-group select {
-          width: 100%;
-          padding: 0.75rem;
-          border: 2px solid #ecf0f1;
-          border-radius: 5px;
-          font-size: 1rem;
-        }
+  .user-info h4 {
+    margin: 0 0 1rem 0;
+    color: #1e293b;
+    font-size: 1.3rem;
+    font-weight: 600;
+  }
 
-        .assign-button {
-          background: #3498db;
-          color: white;
-          border: none;
-          padding: 1rem 2rem;
-          border-radius: 5px;
-          font-size: 1rem;
-          cursor: pointer;
-        }
+  .user-info p {
+    margin: 0.4rem 0;
+    color: #64748b;
+    font-size: 0.95rem;
+  }
 
-        .assignment-info {
-          background: white;
-          padding: 2rem;
-          border-radius: 10px;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
+  .user-actions {
+    display: flex;
+    gap: 1rem;
+  }
 
-        .info-cards {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-          gap: 1rem;
-          margin-top: 1rem;
-        }
+  .approve-button {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  }
 
-        .info-card {
-          background: #f8f9fa;
-          padding: 1rem;
-          border-radius: 5px;
-          text-align: center;
-        }
+  .approve-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+  }
 
-        .info-card h4 {
-          margin: 0 0 0.5rem 0;
-          color: #2c3e50;
-        }
+  .reject-button {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  }
 
-        .record-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 1rem;
-        }
+  .reject-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+  }
 
-        .record-header h4 {
-          margin: 0;
-          color: #2c3e50;
-        }
+  .assignment-form {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    margin-bottom: 2rem;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
 
-        .record-date {
-          color: #7f8c8d;
-          font-size: 0.9rem;
-        }
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
 
-        .record-details p {
-          margin: 0.5rem 0;
-          color: #34495e;
-        }
+  .form-group label {
+    display: block;
+    margin-bottom: 0.75rem;
+    color: #1e293b;
+    font-weight: 600;
+    font-size: 1rem;
+  }
 
-        .encrypted-status {
-          color: #27ae60;
-          font-weight: bold;
-        }
+  .form-group select {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    color: #1e293b;
+    background: #f8fafc;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
 
-        .encrypted-data {
-          margin-top: 1rem;
-          padding-top: 1rem;
-          border-top: 1px solid #ecf0f1;
-        }
+  .form-group select:focus {
+    outline: none;
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+  }
 
-        .encrypted-data h5 {
-          margin: 0 0 0.5rem 0;
-          color: #2c3e50;
-        }
+  .assign-button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 1.1rem 2.5rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    width: 100%;
+  }
 
-        .encrypted-content {
-          background: #f8f9fa;
-          padding: 1rem;
-          border-radius: 5px;
-          font-family: monospace;
-          font-size: 0.8rem;
-          color: #2c3e50;
-          word-break: break-all;
-          max-height: 200px;
-          overflow-y: auto;
-        }
+  .assign-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+  }
 
-        .error-message {
-          background: #e74c3c;
-          color: white;
-          padding: 1rem;
-          border-radius: 5px;
-          margin-bottom: 1rem;
-        }
-      `}</style>
+  .assignment-info {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  .assignment-info h3 {
+    color: #1e293b;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+  }
+
+  .info-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .info-card {
+    background: linear-gradient(135deg, #f8fafc 0%, #e8ecf1 100%);
+    padding: 2rem;
+    border-radius: 16px;
+    text-align: center;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  .info-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  }
+
+  .info-card h4 {
+    margin: 0 0 0.5rem 0;
+    color: #1e293b;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  .info-card p {
+    color: #64748b;
+    font-size: 0.95rem;
+    margin: 0;
+  }
+
+  .record-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  .record-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+  }
+
+  .record-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e8ecf1;
+  }
+
+  .record-header h4 {
+    margin: 0;
+    color: #1e293b;
+    font-size: 1.3rem;
+    font-weight: 600;
+  }
+
+  .record-date {
+    color: #64748b;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  .record-details p {
+    margin: 0.75rem 0;
+    color: #475569;
+    font-size: 0.95rem;
+    padding: 0.5rem;
+    background: #f8fafc;
+    border-radius: 8px;
+  }
+
+  .record-details strong {
+    color: #1e293b;
+    font-weight: 600;
+  }
+
+  .encrypted-status {
+    color: #10b981;
+    font-weight: 600;
+  }
+
+  .encrypted-data {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid #e8ecf1;
+  }
+
+  .encrypted-data h5 {
+    margin: 0 0 1rem 0;
+    color: #1e293b;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  .encrypted-content {
+    background: linear-gradient(135deg, #f8fafc 0%, #e8ecf1 100%);
+    padding: 1.5rem;
+    border-radius: 12px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    color: #475569;
+    word-break: break-all;
+    max-height: 250px;
+    overflow-y: auto;
+    border: 1px solid #e2e8f0;
+  }
+
+  .encrypted-content::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .encrypted-content::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 10px;
+  }
+
+  .encrypted-content::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+  }
+
+  .encrypted-content::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+
+  .error-message {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    padding: 1.25rem 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    font-weight: 500;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+    animation: slideDown 0.3s ease-out;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .admin-dashboard {
+      flex-direction: column;
+    }
+
+    .dashboard-sidebar {
+      width: 100%;
+      height: auto;
+      position: relative;
+    }
+
+    .dashboard-main {
+      padding: 1.5rem;
+    }
+
+    .user-card {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .user-actions {
+      width: 100%;
+      flex-direction: column;
+    }
+  }
+`}</style>
     </div>
   );
 };

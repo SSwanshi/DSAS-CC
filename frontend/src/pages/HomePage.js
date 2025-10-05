@@ -10,26 +10,22 @@ const HomePage = () => {
   useEffect(() => {
     apiService.testBackend()
       .then(response => setMessage(response.data.message))
-      .catch(error => setMessage("Failed to connect to backend."));
+      .catch(() => setMessage("Failed to connect to backend."));
   }, []);
 
   const handleRoleClick = (role) => {
-    if (role === 'admin') {
-      navigate('/admin-login');
-    } else if (role === 'doctor') {
-      navigate('/doctor-login');
-    } else if (role === 'patient') {
-      navigate('/patient-login');
-    }
+    if (role === 'admin') navigate('/admin-login');
+    else if (role === 'doctor') navigate('/doctor-login');
+    else if (role === 'patient') navigate('/patient-login');
   };
 
   return (
     <div className="homepage">
       <div className="hero-section">
-        <h1>Welcome to DSAS</h1>
+        <h1>Welcome to <span className="highlight">DSAS</span></h1>
         <p className="subtitle">Doctor-Patient-Admin Secure Data Sharing System</p>
         <p className="description">
-          Your health data, securely managed and accessible anytime, anywhere.
+          Empowering secure access and management of healthcare data — anytime, anywhere.
         </p>
         <p className="server-status">
           <strong>Server Status:</strong> {message}
@@ -64,104 +60,165 @@ const HomePage = () => {
 
       <style jsx>{`
         .homepage {
-          padding: 2rem;
-          max-width: 1200px;
-          margin: 0 auto;
+          min-height: 100vh;
+          padding: 3rem 2rem;
+          background: linear-gradient(135deg, #e8f0ff, #ffffff);
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          font-family: 'Poppins', sans-serif;
         }
 
         .hero-section {
           text-align: center;
           margin-bottom: 3rem;
-          padding: 2rem 0;
+          padding: 2rem;
+          animation: fadeIn 1s ease-in-out;
         }
 
         .hero-section h1 {
           font-size: 3rem;
-          color: #2c3e50;
-          margin-bottom: 1rem;
+          color: #1a202c;
+          margin-bottom: 0.75rem;
+          letter-spacing: 1px;
+        }
+
+        .highlight {
+          color: #0078ff;
         }
 
         .subtitle {
-          font-size: 1.5rem;
-          color: #7f8c8d;
+          font-size: 1.4rem;
+          color: #4a5568;
           margin-bottom: 1rem;
         }
 
         .description {
           font-size: 1.1rem;
-          color: #34495e;
-          margin-bottom: 1rem;
+          color: #2d3748;
+          max-width: 700px;
+          margin: 0 auto 1.5rem;
+          line-height: 1.6;
         }
 
         .server-status {
-          font-size: 0.9rem;
-          color: #27ae60;
-          background: #d5f4e6;
-          padding: 0.5rem 1rem;
-          border-radius: 5px;
+          font-size: 0.95rem;
+          color: #155724;
+          background: #d4edda;
+          border: 1px solid #c3e6cb;
+          padding: 0.6rem 1rem;
+          border-radius: 6px;
           display: inline-block;
+          font-weight: 500;
         }
 
         .role-selection h2 {
           text-align: center;
+          color: #1a202c;
+          font-size: 2rem;
+          font-weight: 600;
           margin-bottom: 2rem;
-          color: #2c3e50;
         }
 
         .role-cards {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
           gap: 2rem;
-          margin-top: 2rem;
+          width: 100%;
+          max-width: 1000px;
+          animation: fadeUp 1.2s ease-in-out;
         }
 
         .role-card {
           background: white;
-          border: 2px solid #ecf0f1;
-          border-radius: 10px;
+          border-radius: 15px;
           padding: 2rem;
           text-align: center;
           cursor: pointer;
           transition: all 0.3s ease;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+          box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .role-card::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(135deg, rgba(0,120,255,0.1), rgba(0,200,180,0.05));
+          opacity: 0;
+          transition: opacity 0.3s ease;
+          border-radius: 15px;
+        }
+
+        .role-card:hover::before {
+          opacity: 1;
         }
 
         .role-card:hover {
-          border-color: #3498db;
-          transform: translateY(-5px);
-          box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+          transform: translateY(-8px);
+          box-shadow: 0 12px 25px rgba(0,0,0,0.1);
         }
 
         .role-icon {
-          font-size: 3rem;
+          font-size: 3.2rem;
           margin-bottom: 1rem;
         }
 
         .role-card h3 {
-          color: #2c3e50;
-          margin-bottom: 1rem;
-          font-size: 1.5rem;
+          color: #1a202c;
+          margin-bottom: 0.8rem;
+          font-size: 1.6rem;
+          font-weight: 600;
         }
 
         .role-card p {
-          color: #7f8c8d;
+          color: #4a5568;
           margin-bottom: 1.5rem;
+          font-size: 1rem;
           line-height: 1.5;
         }
 
         .role-button {
-          background: #3498db;
+          background: #0078ff;
           color: white;
           border: none;
-          padding: 0.75rem 1.5rem;
-          border-radius: 5px;
+          padding: 0.8rem 1.5rem;
+          border-radius: 6px;
           font-size: 1rem;
+          font-weight: 500;
           cursor: pointer;
-          transition: background 0.3s ease;
+          transition: all 0.3s ease;
+          box-shadow: 0 4px 10px rgba(0,120,255,0.3);
         }
 
         .role-button:hover {
-          background: #2980b9;
+          background: #005fcc;
+          box-shadow: 0 6px 14px rgba(0,120,255,0.4);
+          transform: translateY(-2px);
+        }
+
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+          .hero-section h1 {
+            font-size: 2.3rem;
+          }
+          .role-card {
+            padding: 1.5rem;
+          }
         }
       `}</style>
     </div>

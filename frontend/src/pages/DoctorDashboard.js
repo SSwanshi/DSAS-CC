@@ -102,7 +102,7 @@ const DoctorDashboard = () => {
   const renderAssignedPatients = () => (
     <div className="dashboard-content">
       <h2>Your Assigned Patients</h2>
-      
+
       {loading ? (
         <div className="loading">Loading patients...</div>
       ) : assignedPatients.length === 0 ? (
@@ -117,7 +117,7 @@ const DoctorDashboard = () => {
                 <p>Phone: {patient.phone || 'Not provided'}</p>
                 <p>Assigned: {patient.assigned_at ? new Date(patient.assigned_at).toLocaleDateString() : 'Recently'}</p>
               </div>
-              <button 
+              <button
                 onClick={() => fetchPatientRecords(patient.id)}
                 className="view-records-button"
               >
@@ -158,7 +158,7 @@ const DoctorDashboard = () => {
   const renderSearchPatients = () => (
     <div className="dashboard-content">
       <h2>Search All Patients</h2>
-      
+
       <div className="search-section">
         <div className="search-bar">
           <input
@@ -186,7 +186,7 @@ const DoctorDashboard = () => {
                 <p>Phone: {patient.phone || 'Not provided'}</p>
                 <p>Specialization: {patient.specialization || 'N/A'}</p>
               </div>
-              <button 
+              <button
                 onClick={() => fetchPatientRecords(patient.id)}
                 className="view-records-button"
               >
@@ -227,288 +227,512 @@ const DoctorDashboard = () => {
   return (
     <ApprovalMessage user={user}>
       <div className="doctor-dashboard">
-      <div className="dashboard-sidebar">
-        <div className="logo">
-          <h2>DSAS</h2>
+        <div className="dashboard-sidebar">
+          <div className="logo">
+            <h2>DSAS</h2>
+          </div>
+          <nav className="dashboard-nav">
+            <button
+              className={activeTab === 'home' ? 'nav-item active' : 'nav-item'}
+              onClick={() => setActiveTab('home')}
+            >
+              🏠 Home
+            </button>
+            <button
+              className={activeTab === 'assigned-patients' ? 'nav-item active' : 'nav-item'}
+              onClick={() => setActiveTab('assigned-patients')}
+            >
+              👥 Patient Details
+            </button>
+            <button
+              className={activeTab === 'search-patients' ? 'nav-item active' : 'nav-item'}
+              onClick={() => setActiveTab('search-patients')}
+            >
+              🔍 Search Patient
+            </button>
+          </nav>
+          <div className="user-info">
+            <p>Dr. {user?.lastName}</p>
+            <button onClick={logout} className="logout-button">
+              Logout
+            </button>
+          </div>
         </div>
-        <nav className="dashboard-nav">
-          <button 
-            className={activeTab === 'home' ? 'nav-item active' : 'nav-item'}
-            onClick={() => setActiveTab('home')}
-          >
-            🏠 Home
-          </button>
-          <button 
-            className={activeTab === 'assigned-patients' ? 'nav-item active' : 'nav-item'}
-            onClick={() => setActiveTab('assigned-patients')}
-          >
-            👥 Patient Details
-          </button>
-          <button 
-            className={activeTab === 'search-patients' ? 'nav-item active' : 'nav-item'}
-            onClick={() => setActiveTab('search-patients')}
-          >
-            🔍 Search Patient
-          </button>
-        </nav>
-        <div className="user-info">
-          <p>Dr. {user?.lastName}</p>
-          <button onClick={logout} className="logout-button">
-            Logout
-          </button>
+
+        <div className="dashboard-main">
+          {error && <div className="error-message">{error}</div>}
+          {activeTab === 'home' && renderHome()}
+          {activeTab === 'assigned-patients' && renderAssignedPatients()}
+          {activeTab === 'search-patients' && renderSearchPatients()}
         </div>
-      </div>
 
-      <div className="dashboard-main">
-        {error && <div className="error-message">{error}</div>}
-        {activeTab === 'home' && renderHome()}
-        {activeTab === 'assigned-patients' && renderAssignedPatients()}
-        {activeTab === 'search-patients' && renderSearchPatients()}
-      </div>
+        <style jsx>{`
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
-      <style jsx>{`
-        .doctor-dashboard {
-          display: flex;
-          min-height: 100vh;
-          background: #f8f9fa;
-        }
+  .doctor-dashboard {
+    display: flex;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+  }
 
-        .dashboard-sidebar {
-          width: 250px;
-          background: #2c3e50;
-          color: white;
-          padding: 2rem 1rem;
-          display: flex;
-          flex-direction: column;
-        }
+  .dashboard-sidebar {
+    width: 280px;
+    background: linear-gradient(180deg, #0984e3 0%, #0652DD 100%);
+    color: white;
+    padding: 2rem 0;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 4px 0 20px rgba(9, 132, 227, 0.3);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+  }
 
-        .logo h2 {
-          margin: 0 0 2rem 0;
-          text-align: center;
-          color: #3498db;
-        }
+  .logo {
+    padding: 0 1.5rem 2rem;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 2rem;
+  }
 
-        .dashboard-nav {
-          flex: 1;
-        }
+  .logo h2 {
+    margin: 0;
+    font-size: 2.5rem;
+    color: white;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+  }
 
-        .nav-item {
-          width: 100%;
-          background: none;
-          border: none;
-          color: white;
-          padding: 1rem;
-          text-align: left;
-          cursor: pointer;
-          border-radius: 5px;
-          margin-bottom: 0.5rem;
-          transition: background 0.3s ease;
-        }
+  .dashboard-nav {
+    flex: 1;
+    padding: 0 1rem;
+    overflow-y: auto;
+  }
 
-        .nav-item:hover {
-          background: #34495e;
-        }
+  .nav-item {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: rgba(255, 255, 255, 0.9);
+    padding: 1rem 1.25rem;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 12px;
+    margin-bottom: 0.75rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 0.95rem;
+    font-weight: 500;
+    backdrop-filter: blur(10px);
+  }
 
-        .nav-item.active {
-          background: #3498db;
-        }
+  .nav-item:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateX(5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
 
-        .user-info {
-          border-top: 1px solid #34495e;
-          padding-top: 1rem;
-        }
+  .nav-item.active {
+    background: white;
+    color: #0984e3;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
 
-        .logout-button {
-          background: #e74c3c;
-          color: white;
-          border: none;
-          padding: 0.5rem 1rem;
-          border-radius: 5px;
-          cursor: pointer;
-          width: 100%;
-        }
+  .user-info {
+    padding: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+  }
 
-        .dashboard-main {
-          flex: 1;
-          padding: 2rem;
-        }
+  .user-info p {
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-align: center;
+  }
 
-        .dashboard-content h2 {
-          color: #2c3e50;
-          margin-bottom: 1rem;
-        }
+  .logout-button {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    color: white;
+    border: none;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+  }
 
-        .welcome-cards {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 2rem;
-          margin-top: 2rem;
-        }
+  .logout-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.5);
+  }
 
-        .welcome-card {
-          background: white;
-          padding: 2rem;
-          border-radius: 10px;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-          text-align: center;
-        }
+  .dashboard-main {
+    flex: 1;
+    padding: 2.5rem;
+    overflow-y: auto;
+    animation: fadeIn 0.5s ease-out;
+  }
 
-        .welcome-card h3 {
-          color: #2c3e50;
-          margin-bottom: 1rem;
-        }
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 
-        .action-button {
-          background: #3498db;
-          color: white;
-          border: none;
-          padding: 0.75rem 1.5rem;
-          border-radius: 5px;
-          cursor: pointer;
-          margin-top: 1rem;
-        }
+  .dashboard-content h2 {
+    color: #1e3a8a;
+    margin-bottom: 1.5rem;
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    text-align: center;
+    animation: slideDown 0.5s ease-out;
+  }
 
-        .search-section {
-          background: white;
-          padding: 1.5rem;
-          border-radius: 10px;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-          margin-bottom: 2rem;
-        }
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 
-        .search-bar {
-          display: flex;
-          gap: 1rem;
-        }
+  .welcome-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+  }
 
-        .search-input {
-          flex: 1;
-          padding: 0.75rem;
-          border: 2px solid #ecf0f1;
-          border-radius: 5px;
-          font-size: 1rem;
-        }
+  .welcome-card {
+    background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+    color: white;
+    padding: 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(14, 165, 233, 0.3);
+    text-align: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: fadeInUp 0.5s ease-out;
+    animation-fill-mode: both;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
 
-        .search-button {
-          background: #27ae60;
-          color: white;
-          border: none;
-          padding: 0.75rem 1.5rem;
-          border-radius: 5px;
-          cursor: pointer;
-        }
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 
-        .loading {
-          text-align: center;
-          padding: 2rem;
-          color: #7f8c8d;
-        }
+  .welcome-card:nth-child(1) { animation-delay: 0.1s; }
+  .welcome-card:nth-child(2) { animation-delay: 0.2s; }
 
-        .no-patients {
-          text-align: center;
-          padding: 2rem;
-          color: #7f8c8d;
-          background: white;
-          border-radius: 10px;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
+  .welcome-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 45px rgba(14, 165, 233, 0.4);
+  }
 
-        .patients-list {
-          display: grid;
-          gap: 1rem;
-          margin-bottom: 2rem;
-        }
+  .welcome-card h3 {
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
 
-        .patient-card {
-          background: white;
-          padding: 1.5rem;
-          border-radius: 10px;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
+  .welcome-card p {
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    opacity: 0.95;
+  }
 
-        .patient-info h4 {
-          margin: 0 0 0.5rem 0;
-          color: #2c3e50;
-        }
+  .action-button {
+    background: white;
+    color: #0284c7;
+    border: none;
+    padding: 0.9rem 2rem;
+    border-radius: 12px;
+    cursor: pointer;
+    margin-top: 1rem;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
 
-        .patient-info p {
-          margin: 0.25rem 0;
-          color: #7f8c8d;
-        }
+  .action-button:hover {
+    background: #f0f9ff;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  }
 
-        .view-records-button {
-          background: #3498db;
-          color: white;
-          border: none;
-          padding: 0.5rem 1rem;
-          border-radius: 5px;
-          cursor: pointer;
-        }
+  .search-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    margin-bottom: 2rem;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
 
-        .patient-records {
-          background: white;
-          padding: 2rem;
-          border-radius: 10px;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-          margin-top: 2rem;
-        }
+  .search-bar {
+    display: flex;
+    gap: 1rem;
+  }
 
-        .records-list {
-          display: grid;
-          gap: 1rem;
-          margin-top: 1rem;
-        }
+  .search-input {
+    flex: 1;
+    padding: 1rem 1.25rem;
+    border: 2px solid #bfdbfe;
+    border-radius: 12px;
+    font-size: 1rem;
+    color: #1e3a8a;
+    background: #f0f9ff;
+    transition: all 0.3s ease;
+  }
 
-        .record-card {
-          background: #f8f9fa;
-          padding: 1.5rem;
-          border-radius: 10px;
-          border-left: 4px solid #3498db;
-        }
+  .search-input:focus {
+    border-color: #0284c7;
+    background: white;
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.1);
+  }
 
-        .record-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 1rem;
-        }
+  .search-button {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  }
 
-        .record-header h4 {
-          margin: 0;
-          color: #2c3e50;
-        }
+  .search-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+  }
 
-        .record-date {
-          color: #7f8c8d;
-          font-size: 0.9rem;
-        }
+  .loading {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    color: #64748b;
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
 
-        .record-content {
-          background: white;
-          padding: 1rem;
-          border-radius: 5px;
-          border: 1px solid #ecf0f1;
-        }
+  .no-patients {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    color: #64748b;
+    font-size: 1rem;
+  }
 
-        .record-content pre {
-          margin: 0;
-          white-space: pre-wrap;
-          font-family: monospace;
-          font-size: 0.9rem;
-          color: #2c3e50;
-        }
+  .patients-list {
+    display: grid;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
 
-        .error-message {
-          background: #e74c3c;
-          color: white;
-          padding: 1rem;
-          border-radius: 5px;
-          margin-bottom: 1rem;
-        }
-      `}</style>
+  .patient-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    gap: 2rem;
+  }
+
+  .patient-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+  }
+
+  .patient-info {
+    flex: 1;
+  }
+
+  .patient-info h4 {
+    margin: 0 0 1rem 0;
+    color: #1e3a8a;
+    font-size: 1.3rem;
+    font-weight: 600;
+  }
+
+  .patient-info p {
+    margin: 0.5rem 0;
+    color: #64748b;
+    font-size: 0.95rem;
+  }
+
+  .view-records-button {
+    background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+    flex-shrink: 0;
+  }
+
+  .view-records-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(14, 165, 233, 0.5);
+  }
+
+  .patient-records {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    margin-top: 2rem;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  .patient-records h3 {
+    color: #1e3a8a;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+  }
+
+  .records-list {
+    display: grid;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .record-card {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    padding: 2rem;
+    border-radius: 16px;
+    border-left: 5px solid #0284c7;
+    transition: all 0.3s ease;
+  }
+
+  .record-card:hover {
+    transform: translateX(5px);
+    box-shadow: 0 8px 25px rgba(2, 132, 199, 0.15);
+  }
+
+  .record-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #bfdbfe;
+  }
+
+  .record-header h4 {
+    margin: 0;
+    color: #1e3a8a;
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+
+  .record-date {
+    color: #64748b;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  .record-content {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid #bfdbfe;
+    box-shadow: 0 2px 8px rgba(2, 132, 199, 0.08);
+  }
+
+  .record-content pre {
+    margin: 0;
+    white-space: pre-wrap;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    color: #1e3a8a;
+    line-height: 1.6;
+  }
+
+  .error-message {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    padding: 1.25rem 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    text-align: center;
+    font-weight: 500;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+    animation: slideDown 0.3s ease-out;
+  }
+
+  @media (max-width: 768px) {
+    .doctor-dashboard {
+      flex-direction: column;
+    }
+
+    .dashboard-sidebar {
+      width: 100%;
+      height: auto;
+      position: relative;
+    }
+
+    .dashboard-main {
+      padding: 1.5rem;
+    }
+
+    .patient-card {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .search-bar {
+      flex-direction: column;
+    }
+
+    .welcome-cards {
+      grid-template-columns: 1fr;
+    }
+  }
+`}</style>
       </div>
     </ApprovalMessage>
   );

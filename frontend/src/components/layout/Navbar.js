@@ -1,4 +1,3 @@
-// src/components/layout/Navbar.js
 import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
@@ -18,12 +17,14 @@ const Navbar = () => {
           DSAS 🩺
         </Link>
         <ul className="nav-menu">
-          <li className="nav-item">
-            <NavLink to="/" className="nav-links">
-              Home
-            </NavLink>
-          </li>
-          
+          {!user && (
+            <li className="nav-item">
+              <NavLink to="/" className="nav-links">
+                Home
+              </NavLink>
+            </li>
+          )}
+
           {!user ? (
             <>
               <li className="nav-item">
@@ -45,12 +46,16 @@ const Navbar = () => {
           ) : (
             <>
               <li className="nav-item">
-                <Link 
+                <Link
                   to={
-                    user.role === 'patient' ? '/patient-home' :
-                    user.role === 'doctor' ? '/doctor-home' :
-                    user.role === 'admin' ? '/admin-home' : '/'
-                  } 
+                    user.role === 'patient'
+                      ? '/patient-home'
+                      : user.role === 'doctor'
+                        ? '/doctor-home'
+                        : user.role === 'admin'
+                          ? '/admin-home'
+                          : '/'
+                  }
                   className="nav-links"
                 >
                   Home

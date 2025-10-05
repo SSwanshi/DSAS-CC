@@ -26,12 +26,12 @@ const AdminLoginPage = () => {
 
     try {
       const response = await apiService.login(formData);
-      
+
       if (response.data.user.role !== 'admin') {
         setError('Access denied. Admin credentials required.');
         return;
       }
-      
+
       login(response.data.user, response.data.token);
       navigate('/admin-home');
     } catch (error) {
@@ -40,7 +40,7 @@ const AdminLoginPage = () => {
       setLoading(false);
     }
   };
-  
+
   return (
     <div className="admin-login-container">
       <div className="admin-login-card">
@@ -54,29 +54,29 @@ const AdminLoginPage = () => {
 
         <form onSubmit={handleSubmit} className="admin-login-form">
           <div className="form-group">
-            <input 
-              name="email" 
-              type="email" 
-              placeholder="Admin Email" 
-              onChange={handleChange} 
-              required 
-              className="form-input"
-            />
-          </div>
-          
-          <div className="form-group">
-            <input 
-              name="password" 
-              type="password" 
-              placeholder="Admin Password" 
-              onChange={handleChange} 
-              required 
+            <input
+              name="email"
+              type="email"
+              placeholder="Admin Email"
+              onChange={handleChange}
+              required
               className="form-input"
             />
           </div>
 
-          <button 
-            type="submit" 
+          <div className="form-group">
+            <input
+              name="password"
+              type="password"
+              placeholder="Admin Password"
+              onChange={handleChange}
+              required
+              className="form-input"
+            />
+          </div>
+
+          <button
+            type="submit"
             disabled={loading}
             className="submit-button"
           >
@@ -85,7 +85,7 @@ const AdminLoginPage = () => {
         </form>
 
         <div className="back-to-home">
-          <button 
+          <button
             onClick={() => navigate('/')}
             className="back-button"
           >
@@ -102,118 +102,178 @@ const AdminLoginPage = () => {
 
       <style jsx>{`
         .admin-login-container {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          min-height: 80vh;
-          padding: 2rem;
-        }
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 85vh;
+  padding: 2rem;
+  background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+  font-family: 'Poppins', 'Inter', sans-serif;
+}
 
-        .admin-login-card {
-          background: white;
-          border-radius: 10px;
-          box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-          padding: 2rem;
-          width: 100%;
-          max-width: 400px;
-        }
+.admin-login-card {
+  background: rgba(255,255,255,0.95);
+  border-radius: 20px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+  padding: 3rem 2.5rem;
+  width: 100%;
+  max-width: 450px;
+  min-width: 350px;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
 
-        .admin-login-header {
-          text-align: center;
-          margin-bottom: 2rem;
-        }
+.admin-login-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+}
 
-        .admin-icon {
-          font-size: 3rem;
-          margin-bottom: 1rem;
-        }
+.admin-login-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
 
-        .admin-login-header h2 {
-          color: #2c3e50;
-          margin-bottom: 0.5rem;
-        }
+.admin-icon {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+}
 
-        .admin-login-header p {
-          color: #7f8c8d;
-          font-size: 0.9rem;
-        }
+.admin-login-header h2 {
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+  font-size: 2rem;
+  font-weight: 700;
+}
 
-        .error-message {
-          background: #e74c3c;
-          color: white;
-          padding: 0.75rem;
-          border-radius: 5px;
-          margin-bottom: 1rem;
-          text-align: center;
-        }
+.admin-login-header p {
+  color: #6b7280;
+  font-size: 1rem;
+  font-weight: 500;
+}
 
-        .admin-login-form {
-          margin-bottom: 1.5rem;
-        }
+.error-message {
+  background: #f87171;
+  color: white;
+  padding: 0.9rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-weight: 500;
+  box-shadow: 0 4px 15px rgba(248,113,113,0.3);
+  transition: all 0.3s ease;
+}
 
-        .form-group {
-          margin-bottom: 1rem;
-        }
+.admin-login-form {
+  margin-bottom: 2rem;
+}
 
-        .form-input {
-          width: 100%;
-          padding: 0.75rem;
-          border: 2px solid #ecf0f1;
-          border-radius: 5px;
-          font-size: 1rem;
-          transition: border-color 0.3s ease;
-        }
+.form-group {
+  margin-bottom: 1.2rem;
+}
 
-        .form-input:focus {
-          outline: none;
-          border-color: #3498db;
-        }
+.form-input {
+  width: 100%;
+  padding: 1rem 1.2rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 1.05rem;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
 
-        .submit-button {
-          width: 100%;
-          background: #e74c3c;
-          color: white;
-          border: none;
-          padding: 0.75rem;
-          border-radius: 5px;
-          font-size: 1rem;
-          cursor: pointer;
-          transition: background 0.3s ease;
-        }
+.form-input:focus {
+  outline: none;
+  border-color: #6c5ce7;
+  box-shadow: 0 0 12px rgba(108,92,231,0.2);
+  background-color: #fff;
+}
 
-        .submit-button:hover:not(:disabled) {
-          background: #c0392b;
-        }
+.submit-button {
+  width: 100%;
+  border: none;
+  padding: 1rem;
+  border-radius: 12px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+  color: white;
+  box-shadow: 0 6px 18px rgba(108,92,231,0.35);
+}
 
-        .submit-button:disabled {
-          background: #bdc3c7;
-          cursor: not-allowed;
-        }
+.submit-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #5b4cd1, #8979e0);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(108,92,231,0.45);
+}
 
-        .back-to-home {
-          text-align: center;
-          margin-bottom: 1rem;
-        }
+.submit-button:disabled {
+  background: #cbd5e1;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
 
-        .back-button {
-          background: none;
-          border: none;
-          color: #7f8c8d;
-          cursor: pointer;
-        }
+.back-to-home {
+  text-align: center;
+  margin-bottom: 1rem;
+}
 
-        .admin-credentials {
-          background: #f8f9fa;
-          padding: 1rem;
-          border-radius: 5px;
-          font-size: 0.8rem;
-          color: #6c757d;
-          text-align: center;
-        }
+.back-button {
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  font-weight: 500;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
 
-        .admin-credentials p {
-          margin: 0.25rem 0;
-        }
+.back-button:hover {
+  color: #1f2937;
+  transform: translateY(-1px);
+}
+
+.admin-credentials {
+  background: rgba(243,244,246,0.7);
+  padding: 1rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  color: #4b5563;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.admin-credentials p {
+  margin: 0.25rem 0;
+}
+
+/* Responsive */
+@media screen and (max-width: 500px) {
+  .admin-login-card {
+    padding: 2rem 1.5rem;
+    max-width: 90%;
+  }
+
+  .admin-login-header h2 {
+    font-size: 1.8rem;
+  }
+
+  .form-input {
+    padding: 0.85rem 1rem;
+    font-size: 1rem;
+  }
+
+  .submit-button {
+    padding: 0.85rem;
+    font-size: 1rem;
+  }
+}
+
       `}</style>
     </div>
   );
