@@ -67,14 +67,93 @@ const DoctorDashboard = () => {
   const fetchPatientRecords = async (patientId) => {
     try {
       setLoading(true);
-      const response = await apiService.getPatientRecords(patientId);
+      setError(''); // Clear any previous errors
+      const response = await apiService.getPatientRecordsForDoctor(patientId);
       setPatientRecords(response.data.records);
       setSelectedPatient(patientId);
     } catch (error) {
-      setError('Failed to fetch patient records');
+      console.error('Error fetching patient records:', error);
+      
+      // Check if it's a 403 Forbidden error (not assigned to patient)
+      if (error.response?.status === 403) {
+        setError('You are not assigned to this patient, therefore cannot see his/her data');
+      } else if (error.response?.status === 404) {
+        setError('Patient not found or no records available');
+      } else {
+        setError('Failed to fetch patient records. Please try again.');
+      }
+      
+      setPatientRecords([]);
+      setSelectedPatient(null);
     } finally {
       setLoading(false);
     }
+  };
+
+  // Function to format decrypted data in a user-friendly way
+  const formatRecordData = (data) => {
+    if (!data) return 'No data available';
+    
+    // If it's already a string, try to parse it
+    let parsedData;
+    try {
+      parsedData = typeof data === 'string' ? JSON.parse(data) : data;
+    } catch (e) {
+      return data; // Return as-is if not valid JSON
+    }
+
+    // Format the data nicely
+    const formatField = (key, value) => {
+      if (!value || value === '') return null;
+      
+      // Convert camelCase/snake_case to readable format
+      const readableKey = key
+        .replace(/([A-Z])/g, ' $1')
+        .replace(/_/g, ' ')
+        .replace(/^./, str => str.toUpperCase())
+        .trim();
+      
+      return { key: readableKey, value };
+    };
+
+    const formattedFields = [];
+    
+    // Common health record fields
+    const commonFields = [
+      'patientName', 'patient_name', 'name',
+      'age',
+      'gender',
+      'symptoms',
+      'diagnosis',
+      'medications',
+      'notes', 'additionalNotes', 'additional_notes',
+      'dataType', 'data_type',
+      'bloodPressure', 'blood_pressure',
+      'heartRate', 'heart_rate',
+      'temperature',
+      'weight',
+      'height',
+      'allergies',
+      'medicalHistory', 'medical_history'
+    ];
+
+    // Add common fields first
+    commonFields.forEach(field => {
+      if (parsedData[field]) {
+        const formatted = formatField(field, parsedData[field]);
+        if (formatted) formattedFields.push(formatted);
+      }
+    });
+
+    // Add any remaining fields
+    Object.keys(parsedData).forEach(key => {
+      if (!commonFields.includes(key) && parsedData[key]) {
+        const formatted = formatField(key, parsedData[key]);
+        if (formatted) formattedFields.push(formatted);
+      }
+    });
+
+    return formattedFields;
   };
 
   const renderHome = () => (
@@ -138,13 +217,29 @@ const DoctorDashboard = () => {
               {patientRecords.map(record => (
                 <div key={record.id} className="record-card">
                   <div className="record-header">
-                    <h4>{record.dataType.replace('_', ' ').toUpperCase()}</h4>
+                    <h4>{(record.dataType || record.data_type || 'Unknown').replace('_', ' ').toUpperCase()}</h4>
                     <span className="record-date">
-                      {new Date(record.createdAt).toLocaleDateString()}
+                      {new Date(record.createdAt || record.created_at).toLocaleDateString()}
                     </span>
                   </div>
                   <div className="record-content">
-                    <pre>{JSON.stringify(record.decryptedData, null, 2)}</pre>
+                    {(() => {
+                      const formattedData = formatRecordData(record.decryptedData);
+                      return Array.isArray(formattedData) ? (
+                        <div className="formatted-data">
+                          {formattedData.map((field, index) => (
+                            <div key={index} className="data-field">
+                              <span className="field-label">{field.key}:</span>
+                              <span className="field-value">{field.value}</span>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="raw-data">
+                          <pre>{formattedData}</pre>
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
               ))}
@@ -207,13 +302,29 @@ const DoctorDashboard = () => {
               {patientRecords.map(record => (
                 <div key={record.id} className="record-card">
                   <div className="record-header">
-                    <h4>{record.dataType.replace('_', ' ').toUpperCase()}</h4>
+                    <h4>{(record.dataType || record.data_type || 'Unknown').replace('_', ' ').toUpperCase()}</h4>
                     <span className="record-date">
-                      {new Date(record.createdAt).toLocaleDateString()}
+                      {new Date(record.createdAt || record.created_at).toLocaleDateString()}
                     </span>
                   </div>
                   <div className="record-content">
-                    <pre>{JSON.stringify(record.decryptedData, null, 2)}</pre>
+                    {(() => {
+                      const formattedData = formatRecordData(record.decryptedData);
+                      return Array.isArray(formattedData) ? (
+                        <div className="formatted-data">
+                          {formattedData.map((field, index) => (
+                            <div key={index} className="data-field">
+                              <span className="field-label">{field.key}:</span>
+                              <span className="field-value">{field.value}</span>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="raw-data">
+                          <pre>{formattedData}</pre>
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
               ))}
@@ -260,7 +371,17 @@ const DoctorDashboard = () => {
         </div>
 
         <div className="dashboard-main">
-          {error && <div className="error-message">{error}</div>}
+          {error && (
+            <div className={`error-message ${error.includes('not assigned') ? 'error-warning' : 'error-danger'}`}>
+              <div className="error-icon">
+                {error.includes('not assigned') ? '⚠️' : '❌'}
+              </div>
+              <div className="error-content">
+                <strong>{error.includes('not assigned') ? 'Access Restricted' : 'Error'}</strong>
+                <p>{error}</p>
+              </div>
+            </div>
+          )}
           {activeTab === 'home' && renderHome()}
           {activeTab === 'assigned-patients' && renderAssignedPatients()}
           {activeTab === 'search-patients' && renderSearchPatients()}
@@ -693,15 +814,47 @@ const DoctorDashboard = () => {
   }
 
   .error-message {
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-    color: white;
+    display: flex;
+    align-items: center;
     padding: 1.25rem 1.5rem;
     border-radius: 12px;
     margin-bottom: 2rem;
-    text-align: center;
     font-weight: 500;
-    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     animation: slideDown 0.3s ease-out;
+  }
+
+  .error-danger {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+  }
+
+  .error-warning {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+  }
+
+  .error-icon {
+    font-size: 1.5rem;
+    margin-right: 1rem;
+    flex-shrink: 0;
+  }
+
+  .error-content {
+    flex: 1;
+  }
+
+  .error-content strong {
+    display: block;
+    font-size: 1.1rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .error-content p {
+    margin: 0;
+    opacity: 0.9;
   }
 
   @media (max-width: 768px) {

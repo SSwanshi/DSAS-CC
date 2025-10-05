@@ -16,9 +16,18 @@ const AdminDashboard = () => {
     doctorId: '',
     patientId: ''
   });
+  const [dashboardStats, setDashboardStats] = useState({
+    totalUsers: 0,
+    totalPatients: 0,
+    totalDoctors: 0,
+    totalRecords: 0,
+    pendingApprovals: 0
+  });
 
   useEffect(() => {
-    if (activeTab === 'approve-patients') {
+    if (activeTab === 'home') {
+      fetchDashboardStats();
+    } else if (activeTab === 'approve-patients') {
       fetchPendingUsers('patient');
     } else if (activeTab === 'approve-doctors') {
       fetchPendingUsers('doctor');
@@ -28,6 +37,55 @@ const AdminDashboard = () => {
       fetchAllRecords();
     }
   }, [activeTab]);
+
+  const fetchDashboardStats = async () => {
+    try {
+      setLoading(true);
+      console.log('Frontend: Fetching dashboard stats...');
+      
+      // Fetch all users by role
+      const [patientsResponse, doctorsResponse, allRecordsResponse, pendingPatientsResponse, pendingDoctorsResponse] = await Promise.all([
+        apiService.getUsersByRole('patient'),
+        apiService.getUsersByRole('doctor'),
+        apiService.getAllRecords(),
+        apiService.getPendingUsers('patient'),
+        apiService.getPendingUsers('doctor')
+      ]);
+      
+      console.log('Frontend: API responses:', {
+        patients: patientsResponse.data,
+        doctors: doctorsResponse.data,
+        records: allRecordsResponse.data,
+        pendingPatients: pendingPatientsResponse.data,
+        pendingDoctors: pendingDoctorsResponse.data
+      });
+      
+      const totalPatients = patientsResponse.data.users.length;
+      const totalDoctors = doctorsResponse.data.users.length;
+      const totalRecords = allRecordsResponse.data.records.length;
+      const pendingApprovals = pendingPatientsResponse.data.users.length + pendingDoctorsResponse.data.users.length;
+      
+      console.log('Frontend: Calculated stats:', {
+        totalPatients,
+        totalDoctors,
+        totalRecords,
+        pendingApprovals
+      });
+      
+      setDashboardStats({
+        totalUsers: totalPatients + totalDoctors,
+        totalPatients,
+        totalDoctors,
+        totalRecords,
+        pendingApprovals
+      });
+    } catch (error) {
+      console.error('Frontend: Error fetching dashboard stats:', error);
+      setError('Failed to fetch dashboard statistics');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchPendingUsers = async (role) => {
     try {
@@ -97,6 +155,58 @@ const AdminDashboard = () => {
     <div className="dashboard-content">
       <h2>Welcome, {user?.firstName} {user?.lastName}</h2>
       <p>Cloud Server Administration Panel</p>
+      
+      {loading ? (
+        <div className="loading">Loading dashboard statistics...</div>
+      ) : (
+        <div className="stats-grid">
+          <div className="stat-card">
+            <div className="stat-icon">👥</div>
+            <div className="stat-content">
+              <h3>Total Users</h3>
+              <p className="stat-number">{dashboardStats.totalUsers}</p>
+              <p className="stat-label">Registered users</p>
+            </div>
+          </div>
+          
+          <div className="stat-card">
+            <div className="stat-icon">🏥</div>
+            <div className="stat-content">
+              <h3>Patients</h3>
+              <p className="stat-number">{dashboardStats.totalPatients}</p>
+              <p className="stat-label">Approved patients</p>
+            </div>
+          </div>
+          
+          <div className="stat-card">
+            <div className="stat-icon">👨‍⚕️</div>
+            <div className="stat-content">
+              <h3>Doctors</h3>
+              <p className="stat-number">{dashboardStats.totalDoctors}</p>
+              <p className="stat-label">Approved doctors</p>
+            </div>
+          </div>
+          
+          <div className="stat-card">
+            <div className="stat-icon">📋</div>
+            <div className="stat-content">
+              <h3>Health Records</h3>
+              <p className="stat-number">{dashboardStats.totalRecords}</p>
+              <p className="stat-label">Uploaded records</p>
+            </div>
+          </div>
+          
+          <div className="stat-card">
+            <div className="stat-icon">⏳</div>
+            <div className="stat-content">
+              <h3>Pending Approvals</h3>
+              <p className="stat-number">{dashboardStats.pendingApprovals}</p>
+              <p className="stat-label">Awaiting approval</p>
+            </div>
+          </div>
+        </div>
+      )}
+      
       <div className="welcome-cards">
         <div className="welcome-card">
           <h3>👥 Approve Patients</h3>
@@ -143,7 +253,7 @@ const AdminDashboard = () => {
           {pendingUsers.map(user => (
             <div key={user.id} className="user-card">
               <div className="user-info">
-                <h4>{user.first_name} {user.last_name}</h4>
+                <h4>{user.firstName || user.first_name} {user.lastName || user.last_name}</h4>
                 <p>Email: {user.email}</p>
                 <p>Username: {user.username}</p>
                 <p>Phone: {user.phone || 'Not provided'}</p>
@@ -186,7 +296,7 @@ const AdminDashboard = () => {
             <option value="">Choose a patient</option>
             {unassignedPatients.map(patient => (
               <option key={patient.id} value={patient.id}>
-                {patient.firstName} {patient.lastName} ({patient.email})
+                {patient.firstName || patient.first_name} {patient.lastName || patient.last_name} ({patient.email})
               </option>
             ))}
           </select>
@@ -202,7 +312,7 @@ const AdminDashboard = () => {
             <option value="">Choose a doctor</option>
             {unassignedDoctors.map(doctor => (
               <option key={doctor.id} value={doctor.id}>
-                Dr. {doctor.firstName} {doctor.lastName} ({doctor.specialization || 'General'})
+                Dr. {doctor.firstName || doctor.first_name} {doctor.lastName || doctor.last_name} ({doctor.specialization || 'General'})
               </option>
             ))}
           </select>
@@ -243,16 +353,16 @@ const AdminDashboard = () => {
           {allRecords.map(record => (
             <div key={record.id} className="record-card">
               <div className="record-header">
-                <h4>{record.dataType.replace('_', ' ').toUpperCase()}</h4>
+                <h4>{(record.dataType || record.data_type || 'Unknown').replace('_', ' ').toUpperCase()}</h4>
                 <span className="record-date">
                   {new Date(record.created_at).toLocaleDateString()}
                 </span>
               </div>
               <div className="record-details">
-                <p><strong>Patient:</strong> {record.patient.firstName} {record.patient.lastName}</p>
-                <p><strong>Email:</strong> {record.patient.email}</p>
-                <p><strong>File:</strong> {record.fileName}</p>
-                <p><strong>Size:</strong> {record.fileSize} bytes</p>
+                <p><strong>Patient:</strong> {record.patient?.firstName || record.patient?.first_name || 'Unknown'} {record.patient?.lastName || record.patient?.last_name || 'Patient'}</p>
+                <p><strong>Email:</strong> {record.patient?.email || 'N/A'}</p>
+                <p><strong>File:</strong> {record.fileName || record.file_name || 'N/A'}</p>
+                <p><strong>Size:</strong> {record.fileSize || record.file_size || 0} bytes</p>
                 <p><strong>Status:</strong> <span className="encrypted-status">🔒 Encrypted</span></p>
               </div>
               <div className="encrypted-data">
@@ -448,6 +558,53 @@ const AdminDashboard = () => {
     color: #64748b;
     font-size: 1.1rem;
     margin-bottom: 2rem;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .stat-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  .stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  }
+
+  .stat-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .stat-content h3 {
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  .stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #667eea;
+    margin: 0.5rem 0;
+  }
+
+  .stat-label {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin: 0;
   }
 
   .welcome-cards {

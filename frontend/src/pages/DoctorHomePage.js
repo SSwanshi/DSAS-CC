@@ -29,7 +29,7 @@ const DoctorHomePage = () => {
       // Fetch recent records (from assigned patients)
       if (patientsResponse.data.patients.length > 0) {
         try {
-          const recordsResponse = await apiService.getPatientRecords(patientsResponse.data.patients[0].id);
+          const recordsResponse = await apiService.getPatientRecordsForDoctor(patientsResponse.data.patients[0].id);
           setRecentRecords(recordsResponse.data.records.slice(0, 3)); // Get latest 3 records
         } catch (error) {
           setRecentRecords([]);
@@ -151,7 +151,7 @@ const DoctorHomePage = () => {
                 <div key={record.id} className="record-item">
                   <div className="record-icon">📄</div>
                   <div className="record-content">
-                    <p className="record-type">{record.data_type.replace('_', ' ').toUpperCase()}</p>
+                    <p className="record-type">{(record.data_type || 'Unknown').replace('_', ' ').toUpperCase()}</p>
                     <p className="record-patient">Patient: {record.first_name} {record.last_name}</p>
                     <span className="record-time">
                       {new Date(record.created_at).toLocaleDateString()}

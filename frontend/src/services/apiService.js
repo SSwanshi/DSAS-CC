@@ -14,6 +14,7 @@ apiClient.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+  console.log('API Request:', config.method?.toUpperCase(), config.baseURL + config.url);
   return config;
 });
 
@@ -52,7 +53,13 @@ export const apiService = {
   uploadRecord: (recordData) => {
     return apiClient.post('/patient/upload', recordData);
   },
+  testPatientRoutes: () => {
+    console.log('API: Testing patient routes...');
+    return apiClient.get('/patient/test');
+  },
   getPatientRecords: () => {
+    console.log('API: Getting patient records...');
+    console.log('API: Calling URL: /api/patient/records');
     return apiClient.get('/patient/records');
   },
   getRecord: (recordId) => {
@@ -66,11 +73,11 @@ export const apiService = {
   getAllPatients: () => {
     return apiClient.get('/doctor/all-patients');
   },
-  getPatientRecords: (patientId) => {
+  getPatientRecordsForDoctor: (patientId) => {
     return apiClient.get(`/doctor/patients/${patientId}/records`);
   },
   getRecord: (recordId) => {
-    return apiClient.get(`/doctor/records/${recordId}`);
+    return apiClient.get(`/doctor/record/${recordId}`);
   },
   searchPatients: (query) => {
     return apiClient.get(`/doctor/search-patients?query=${query}`);
@@ -96,6 +103,7 @@ export const apiService = {
     return apiClient.get('/admin/all-records');
   },
   getUsersByRole: (role) => {
+    console.log(`API: Getting users by role: ${role}`);
     return apiClient.get(`/admin/users/${role}`);
   }
 };

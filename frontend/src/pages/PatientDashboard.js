@@ -30,10 +30,23 @@ const PatientDashboard = () => {
   const fetchRecords = async () => {
     try {
       setLoading(true);
+      setError(''); // Clear any previous errors
+      console.log('Frontend: Fetching patient records...');
+      console.log('Frontend: Current user:', user);
+      
+      if (!user || !user.id) {
+        throw new Error('User not authenticated');
+      }
+      
       const response = await apiService.getPatientRecords();
-      setRecords(response.data.records);
+      console.log('Frontend: API response:', response);
+      console.log('Frontend: Records data:', response.data.records);
+      setRecords(response.data.records || []);
     } catch (error) {
-      setError('Failed to fetch records');
+      console.error('Frontend: Error fetching records:', error);
+      console.error('Frontend: Error details:', error.response?.data);
+      setError(`Failed to fetch records: ${error.response?.data?.message || error.message}`);
+      setRecords([]); // Set empty array on error
     } finally {
       setLoading(false);
     }
@@ -68,6 +81,11 @@ const PatientDashboard = () => {
       });
 
       alert('Record uploaded successfully!');
+      
+      // Refresh the records list if we're on the records tab
+      if (activeTab === 'records') {
+        fetchRecords();
+      }
     } catch (error) {
       setError('Failed to upload record');
     } finally {
@@ -203,9 +221,62 @@ const PatientDashboard = () => {
 
   const renderRecords = () => (
     <div className="dashboard-content">
-      <h2>Your Uploaded Records</h2>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+        <h2>Your Uploaded Records</h2>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <button 
+            onClick={async () => {
+              try {
+                const response = await apiService.testPatientRoutes();
+                console.log('Test route response:', response.data);
+                alert('Patient routes are working!');
+              } catch (error) {
+                console.error('Test route error:', error);
+                alert('Patient routes test failed: ' + error.message);
+              }
+            }}
+            style={{
+              padding: '0.5rem 1rem',
+              backgroundColor: '#28a745',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer'
+            }}
+          >
+            🧪 Test Routes
+          </button>
+          <button 
+            onClick={fetchRecords} 
+            disabled={loading}
+            style={{
+              padding: '0.5rem 1rem',
+              backgroundColor: '#667eea',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              opacity: loading ? 0.6 : 1
+            }}
+          >
+            {loading ? 'Loading...' : '🔄 Refresh'}
+          </button>
+        </div>
+      </div>
       <p>All your health data is stored in encrypted format for maximum security.</p>
 
+      {error && (
+        <div className="error-message" style={{
+          background: '#ff6b6b',
+          color: 'white',
+          padding: '1rem',
+          borderRadius: '8px',
+          marginBottom: '1rem'
+        }}>
+          {error}
+        </div>
+      )}
+      
       {loading ? (
         <div className="loading">Loading records...</div>
       ) : records.length === 0 ? (
@@ -215,14 +286,14 @@ const PatientDashboard = () => {
           {records.map(record => (
             <div key={record.id} className="record-card">
               <div className="record-header">
-                <h4>{record.data_type.replace('_', ' ').toUpperCase()}</h4>
+                <h4>{(record.dataType || record.data_type || 'Unknown').replace('_', ' ').toUpperCase()}</h4>
                 <span className="record-date">
                   {new Date(record.created_at).toLocaleDateString()}
                 </span>
               </div>
               <div className="record-details">
-                <p><strong>File:</strong> {record.file_name}</p>
-                <p><strong>Size:</strong> {record.file_size} bytes</p>
+                <p><strong>File:</strong> {record.fileName || record.file_name || 'N/A'}</p>
+                <p><strong>Size:</strong> {record.fileSize || record.file_size || 0} bytes</p>
                 <p><strong>Status:</strong> <span className="encrypted-status">🔒 Encrypted</span></p>
               </div>
             </div>

@@ -42,11 +42,14 @@ exports.getAllPatients = async (req, res) => {
   }
 };
 
-// Get patient records (decrypted)
-exports.getPatientRecords = async (req, res) => {
+// Get patient records (decrypted) - for doctors
+exports.getPatientRecordsForDoctor = async (req, res) => {
   try {
+    console.log('=== DOCTOR CONTROLLER: getPatientRecordsForDoctor called ===');
     const { patientId } = req.params;
     const doctorId = req.user.id;
+    console.log('Doctor ID:', doctorId);
+    console.log('Requested Patient ID:', patientId);
     
     // Check if doctor is assigned to this patient
     const isAssigned = await DoctorPatientAssignment.findOne({
@@ -78,8 +81,8 @@ exports.getPatientRecords = async (req, res) => {
   }
 };
 
-// Get specific record (decrypted)
-exports.getRecord = async (req, res) => {
+// Get specific record (decrypted) - for doctors
+exports.getRecordForDoctor = async (req, res) => {
   try {
     const { recordId } = req.params;
     const doctorId = req.user.id;

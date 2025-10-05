@@ -170,6 +170,8 @@ exports.getAssignmentData = async (req, res) => {
 // Get all uploaded data (encrypted)
 exports.getAllRecords = async (req, res) => {
   try {
+    console.log('Getting all records...');
+    
     const records = await HealthRecord.findAll({
       include: [{
         model: User,
@@ -178,6 +180,9 @@ exports.getAllRecords = async (req, res) => {
       }],
       order: [['created_at', 'DESC']]
     });
+    
+    console.log(`Found ${records.length} total records`);
+    console.log('Records data:', JSON.stringify(records, null, 2));
     
     res.json({ records });
   } catch (error) {
@@ -195,10 +200,15 @@ exports.getUsersByRole = async (req, res) => {
       return res.status(400).json({ message: 'Invalid role' });
     }
     
+    console.log(`Getting users by role: ${role}`);
+    
     const users = await User.findAll({
       where: { role: role },
-      attributes: ['id', 'username', 'email', 'firstName', 'lastName', 'isApproved', 'createdAt']
+      attributes: ['id', 'username', 'email', 'firstName', 'lastName', 'isApproved', 'created_at']
     });
+    
+    console.log(`Found ${users.length} users with role ${role}`);
+    console.log('Users data:', JSON.stringify(users, null, 2));
     
     res.json({ users });
   } catch (error) {

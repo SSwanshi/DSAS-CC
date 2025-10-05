@@ -38,3 +38,55 @@ input[type="password"] {
   border-radius: 5px;
   box-sizing: border-box;
 }
+
+/* Doctor Dashboard - Formatted Record Data Styles */
+.formatted-data {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 0.5rem 0;
+}
+
+.data-field {
+  display: flex;
+  margin-bottom: 0.75rem;
+  padding: 0.5rem;
+  background: white;
+  border-radius: 6px;
+  border-left: 4px solid #007bff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.data-field:last-child {
+  margin-bottom: 0;
+}
+
+.field-label {
+  font-weight: 600;
+  color: #495057;
+  min-width: 150px;
+  margin-right: 1rem;
+  flex-shrink: 0;
+}
+
+.field-value {
+  color: #212529;
+  flex: 1;
+  word-break: break-word;
+}
+
+.raw-data {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 0.5rem 0;
+}
+
+.raw-data pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  color: #495057;
+}

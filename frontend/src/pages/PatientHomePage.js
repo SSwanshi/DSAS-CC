@@ -66,7 +66,7 @@ const PatientHomePage = () => {
               <h3>Assigned Doctor</h3>
               {assignedDoctor ? (
                 <div>
-                  <p className="doctor-name">Dr. {assignedDoctor.first_name} {assignedDoctor.last_name}</p>
+                  <p className="doctor-name">Dr. {assignedDoctor.firstName || assignedDoctor.first_name} {assignedDoctor.lastName || assignedDoctor.last_name}</p>
                   <p className="doctor-specialty">{assignedDoctor.specialization || 'General Practice'}</p>
                   <p className="doctor-contact">{assignedDoctor.email}</p>
                 </div>
